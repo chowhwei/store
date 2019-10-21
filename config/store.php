@@ -7,14 +7,17 @@ return [
         'aliyunoss' => [
             'driver' => 'aliyunoss',
 
-            'endpoint' => '',
-            'username' => '',
-            'password' => ''
+            'auth' => [
+                'endpoint' => 'http://oss-cn-hangzhou-internal.aliyuncs.com',
+                'key_id' => '',
+                'key_secret' => ''
+            ]
         ],
 
         'file' => [
             'driver' => 'file',
-            'path' => '/data0/path/to/file'
+
+            'dir' => '/data0/path/to/file'
         ]
     ]
 ];
