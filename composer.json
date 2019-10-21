@@ -1,0 +1,33 @@
+{
+  "name": "chowhwei/store",
+  "type": "package",
+  "description": "Laravel 6 Store Package",
+  "keywords": ["chowhwei", "store"],
+  "homepage": "https://github.com/chowhwei/store",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "chowhwei",
+      "email": "chowhwei@gmail.com",
+      "homepage": "https://github.com/chowhwei",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^7.2",
+    "illuminate/config": "~5.0|^6.0",
+    "laravel/framework": "^6.0"
+  },
+  "require-dev": {
+  },
+  "autoload": {
+    "psr-4": {
+      "Chowhwei\\Store\\": "src/"
+    },
+    "files": [
+    ]
+  },
+  "autoload-dev": {
+  },
+  "minimum-stability": "stable"
+}
