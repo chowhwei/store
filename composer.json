@@ -16,7 +16,9 @@
   "require": {
     "php": "^7.2",
     "illuminate/config": "~5.0|^6.0",
-    "laravel/framework": "^6.0"
+    "laravel/framework": "^6.0",
+    "illuminate/database": "^6.0",
+    "aliyuncs/oss-sdk-php": "^2.3"
   },
   "require-dev": {
   },
@@ -26,6 +28,15 @@
     },
     "files": [
     ]
+  },
+  "extra": {
+    "branch-alias": {
+    },
+    "laravel": {
+      "providers": [
+        "Chowhwei\\Store\\StoreServiceProvider"
+      ]
+    }
   },
   "autoload-dev": {
   },
