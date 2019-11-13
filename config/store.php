@@ -1,23 +1,15 @@
 <?php
 
 return [
-    'default' => 'aliyunoss',
+    'default' => 'toc',
 
-    'storages' => [
-        'aliyunoss' => [
-            'driver' => 'aliyunoss',
-
-            'auth' => [
-                'endpoint' => 'http://oss-cn-hangzhou-internal.aliyuncs.com',
-                'key_id' => '',
-                'key_secret' => ''
-            ]
-        ],
-
-        'file' => [
-            'driver' => 'file',
-
-            'dir' => '/data0/path/to/file'
+    'apps' => [
+        'toc' => [
+            'oss_endpoint' => 'http://oss-cn-hangzhou-internal.aliyuncs.com',
+            'oss_keyid' => '',
+            'oss_keysecret' => '',
+            'oss_bucket' => 'kj-file',
+            'nfs_root' => '/data1'
         ]
     ]
 ];
