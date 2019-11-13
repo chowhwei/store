@@ -14,8 +14,13 @@ class StoreConfig implements StoreConfigContract
         if (is_null($store_app)) {
             $store_app = $this->getConfig($framework, 'store.default');
         }
-        $app = $store_app;
-        $this->config = $this->getConfig($framework, 'store.apps.' . $app);
+
+        if(is_string($store_app)) {
+            $app = $store_app;
+            $this->config = $this->getConfig($framework, 'store.apps.' . $app);
+        }elseif (is_array($store_app)){
+            $this->config = $store_app;
+        }
     }
 
     protected function getConfig($framework, $key)
