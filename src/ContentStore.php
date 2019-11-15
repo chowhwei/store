@@ -3,34 +3,21 @@
 namespace Chowhwei\Store;
 
 use Chowhwei\Store\Contracts\ContentStore as ContentStoreContract;
-use Chowhwei\Store\Contracts\StoreConfig;
-use Chowhwei\Store\Store\BaseStore;
 use Exception;
 
-class ContentStore extends BaseStore implements ContentStoreContract
+class ContentStore extends KeyStore implements ContentStoreContract
 {
     /**
-     * KeyStore constructor.
-     * @param StoreConfig $config
+     * @param string $content
+     * @return string
      * @throws Exception
      */
-    public function __construct(StoreConfig $config)
+    public function storeContent(string $content): string
     {
-        parent::__construct($config);
-    }
-
-    public function store(string $content): string
-    {
-        // TODO: Implement store() method.
-    }
-
-    public function get(string $hash): string
-    {
-        // TODO: Implement get() method.
-    }
-
-    public function del(string $hash)
-    {
-        // TODO: Implement del() method.
+        $hash = hash('sha256', $content);
+        if(is_null($this->ossClient->get($hash))){
+            $this->store($hash, $content);
+        }
+        return $hash;
     }
 }

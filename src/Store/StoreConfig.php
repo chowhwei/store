@@ -2,65 +2,78 @@
 
 namespace Chowhwei\Store\Store;
 
+use Chowhwei\Store\Contracts\ConfigLoader;
 use Chowhwei\Store\Contracts\StoreConfig as StoreConfigContract;
+use Exception;
+use Illuminate\Config\Repository as Config;
 
 class StoreConfig implements StoreConfigContract
 {
     protected $app;
     protected $config;
 
-    public function __construct($framework, $store_app = null)
+    /**
+     * StoreConfig constructor.
+     * @param ConfigLoader $configLoader
+     * @param string $app
+     * @throws Exception
+     */
+    public function __construct(ConfigLoader $configLoader, string $app)
     {
-        if (is_null($store_app)) {
-            $store_app = $this->getConfig($framework, 'store.default');
+        $full_config = $configLoader->load('store');
+
+        if ($app == 'default') {
+            $app = $full_config->get('default');
         }
 
-        if(is_string($store_app)) {
-            $app = $store_app;
-            $this->config = $this->getConfig($framework, 'store.apps.' . $app);
-        }elseif (is_array($store_app)){
-            $this->config = $store_app;
-        }
+        $this->app = $app;
+        $this->config = $this->parseConfig($full_config, $app);
     }
 
-    protected function getConfig($framework, $key)
+    /**
+     * @param Config $config
+     * @param string $app
+     * @return Config
+     * @throws Exception
+     */
+    protected function parseConfig(Config $config, string $app)
     {
-        $sf = strtolower($framework);
-        $config = null;
-        switch ($sf) {
-            case 'laravel':
-                $config = config($key);
-                break;
-            case 'kohana':
-                $config = Kohana::$config->load($key);
-                break;
+
+        $oss = $config->get('store.' . $app . '.oss');
+        $file = $config->get('store.' . $app . '.file');
+        if(is_null($oss) || is_null($file)){
+            throw new Exception('配置错误');
         }
-        return $config;
+
+        $config = $config->get('oss.' . $oss)
+            + $config->get('file.' . $file);
+
+        return new Config($config);
     }
 
     public function getOssEndPoint(): string
     {
-        return $this->config['oss_endpoint'];
+        return $this->config->get('oss_endpoint', '');
     }
 
     public function getOssKeyId(): string
     {
-        return $this->config['oss_keyid'];
+        return $this->config->get('oss_keyid', '');
     }
 
     public function getOssKeySecret(): string
     {
-        return $this->config['oss_keysecret'];
+        return $this->config->get('oss_keysecret', '');
     }
 
     public function getOssBucket(): string
     {
-        return $this->config['oss_bucket'];
+        return $this->config->get('oss_bucket', '');
     }
 
     public function getNfsRoot(): string
     {
-        return $this->config['nfs_root'];
+        return $this->config->get('nfs_root', '');
     }
 
     public function getStoreApp(): string

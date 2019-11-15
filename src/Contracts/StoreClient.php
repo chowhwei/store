@@ -9,10 +9,10 @@ interface StoreClient
     /**
      * @param string $id
      * @param null $default
-     * @return string
+     * @return mixed
      * @throws Exception
      */
-    public function get(string $id, $default = null): string;
+    public function get(string $id, $default = null);
 
     /**
      * @param string $id

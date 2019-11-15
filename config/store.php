@@ -3,12 +3,24 @@
 return [
     'default' => 'toc',
 
-    'apps' => [
+    'store' => [
         'toc' => [
-            'oss_endpoint' => 'http://oss-cn-hangzhou-internal.aliyuncs.com',
+            'oss' => 'kj-file',
+            'file' => 'data1'
+        ]
+    ],
+
+    'oss' => [
+        'kj-file' => [
+            'oss_endpoint' => '',
             'oss_keyid' => '',
             'oss_keysecret' => '',
-            'oss_bucket' => 'kj-file',
+            'oss_bucket' => ''
+        ]
+    ],
+
+    'file' => [
+        'data1' => [
             'nfs_root' => '/data1'
         ]
     ]

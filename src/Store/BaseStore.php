@@ -3,13 +3,10 @@
 namespace Chowhwei\Store\Store;
 
 use Chowhwei\Store\Contracts\StoreClient;
-use Chowhwei\Store\Contracts\StoreConfig;
 use Exception;
 
 abstract class BaseStore
 {
-    /** @var StoreConfig $config */
-    protected $config;
     /** @var StoreClient $ossClient */
     protected $ossClient;
     /** @var StoreClient $fileClient */
@@ -17,13 +14,13 @@ abstract class BaseStore
 
     /**
      * KeyStore constructor.
-     * @param StoreConfig $config
+     * @param OssClient $ossClient
+     * @param FileClient $fileClient
      * @throws Exception
      */
-    public function __construct(StoreConfig $config)
+    public function __construct(OssClient $ossClient, FileClient $fileClient)
     {
-        $this->config = $config;
-        $this->ossClient = new OssClient($this->config->getOssKeyId(), $this->config->getOssKeySecret(), $this->config->getOssEndPoint(), $this->config->getOssBucket(), $this->config->getStoreApp());
-        $this->fileClient = new FileClient($this->config->getNfsRoot(), $this->config->getStoreApp());
+        $this->ossClient = $ossClient;
+        $this->fileClient = $fileClient;
     }
 }

@@ -3,9 +3,10 @@
 namespace Chowhwei\Store\Store;
 
 use Chowhwei\Store\Contracts\StoreClient;
+use Chowhwei\Store\Contracts\StoreConfig;
+use Exception;
 use OSS\Core\OssException;
 use OSS\OssClient as AliyunOssClient;
-use Exception;
 
 class OssClient implements StoreClient
 {
@@ -18,21 +19,17 @@ class OssClient implements StoreClient
 
     /**
      * OssClient constructor.
-     * @param string $accessKeyId
-     * @param string $accessKeySecret
-     * @param string $endpoint
-     * @param string $bucket
-     * @param string $app
+     * @param StoreConfig $storeConfig
      * @throws OssException
      */
-    public function __construct(string $accessKeyId, string $accessKeySecret, string $endpoint, string $bucket, string $app)
+    public function __construct(StoreConfig $storeConfig)
     {
-        $this->aliyunOssClient = new AliyunOssClient($accessKeyId, $accessKeySecret, $endpoint, false);
-        $this->bucket = $bucket;
-        $this->app = $app;
+        $this->aliyunOssClient = new AliyunOssClient($storeConfig->getOssKeyId(), $storeConfig->getOssKeySecret(), $storeConfig->getOssEndPoint(), false);
+        $this->bucket = $storeConfig->getOssBucket();
+        $this->app = $storeConfig->getStoreApp();
     }
 
-    public function get(string $id, $default = null): string
+    public function get(string $id, $default = null)
     {
         $key = $this->getLimittedId($id);
         try{

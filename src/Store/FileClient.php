@@ -8,6 +8,7 @@ use ErrorException;
 use Exception;
 use SplFileInfo;
 use UnexpectedValueException;
+use Chowhwei\Store\Contracts\StoreConfig;
 
 class FileClient implements StoreClient
 {
@@ -20,14 +21,13 @@ class FileClient implements StoreClient
 
     /**
      * FileClient constructor.
-     * @param string $nfs_root
-     * @param string $app
+     * @param StoreConfig $storeConfig
      * @throws Exception
      */
-    public function __construct(string $nfs_root, string $app)
+    public function __construct(StoreConfig $storeConfig)
     {
-        $this->nfs_root = $nfs_root;
-        $this->app = $app;
+        $this->nfs_root = $storeConfig->getNfsRoot();
+        $this->app = $storeConfig->getStoreApp();
         $this->checkDir();
     }
 
@@ -45,15 +45,15 @@ class FileClient implements StoreClient
         }
 
         if ($this->dir->isFile()) {
-            throw new Exception('Unable to create directory as a file already exists : :resource', array(':resource' => $this->dir->getRealPath()));
+            throw new Exception(strtr('Unable to create directory as a file already exists : :resource', array(':resource' => $this->dir->getRealPath())));
         }
 
         if (!$this->dir->isReadable()) {
-            throw new Exception('Unable to read from the directory :resource', array(':resource' => $this->dir->getRealPath()));
+            throw new Exception(strtr('Unable to read from the directory :resource', array(':resource' => $this->dir->getRealPath())));
         }
 
         if (!$this->dir->isWritable()) {
-            throw new Exception('Unable to write to the directory :resource', array(':resource' => $this->dir->getRealPath()));
+            throw new Exception(strtr('Unable to write to the directory :resource', array(':resource' => $this->dir->getRealPath())));
         }
     }
 
@@ -68,7 +68,7 @@ class FileClient implements StoreClient
     protected function makeDirectory(string $directory, int $mode = 0777, bool $recursive = FALSE, $context = NULL)
     {
         if (!mkdir($directory, $mode, $recursive, $context)) {
-            throw new Exception('Failed to create the defined directory : :directory', [':directory' => $directory]);
+            throw new Exception(strtr('Failed to create the defined directory : :directory', [':directory' => $directory]));
         }
         chmod($directory, $mode);
 
@@ -78,10 +78,10 @@ class FileClient implements StoreClient
     /**
      * @param string $id
      * @param null $default
-     * @return string
+     * @return mixed
      * @throws Exception
      */
-    public function get($id, $default = null): string
+    public function get(string $id, $default = null)
     {
         $filename = $this->getFilename($this->getSanitizedId($id));
         $directory = $this->resolveDirectory($filename);
@@ -147,7 +147,7 @@ class FileClient implements StoreClient
      * @throws Exception
      * @throws ErrorException
      */
-    public function set($id, $data): bool
+    public function set(string $id, $data): bool
     {
         $filename = $this->getFilename($this->getSanitizedId($id));
         $directory = $this->resolveDirectory($filename);
@@ -156,7 +156,7 @@ class FileClient implements StoreClient
 
         if (!$dir->isDir()) {
             if (!mkdir($directory, 0777, TRUE)) {
-                throw new Exception(__METHOD__ . ' unable to create directory : :directory', [':directory' => $directory]);
+                throw new Exception(strtr(__METHOD__ . ' unable to create directory : :directory', [':directory' => $directory]));
             }
 
             chmod($directory, 0777);
@@ -199,7 +199,7 @@ class FileClient implements StoreClient
      * @return bool
      * @throws Exception
      */
-    public function del($id): bool
+    public function del(string $id): bool
     {
         $filename = $this->getFilename($this->getSanitizedId($id));
         $directory = $this->resolveDirectory($filename);
@@ -225,7 +225,7 @@ class FileClient implements StoreClient
                     return unlink($file->getRealPath());
                 } catch (Exception $e) {
                     if ($e->getCode() === E_WARNING) {
-                        throw new Exception(__METHOD__ . ' failed to delete file : :file', [':file' => $file->getRealPath()]);
+                        throw new Exception(strtr(__METHOD__ . ' failed to delete file : :file', [':file' => $file->getRealPath()]));
                     }
                 }
             } // Else, is directory
@@ -262,7 +262,7 @@ class FileClient implements StoreClient
                 } catch (Exception $e) {
                     // Catch any delete directory warnings
                     if ($e->getCode() === E_WARNING) {
-                        throw new Exception(__METHOD__ . ' failed to delete directory : :directory', [':directory' => $file->getRealPath()]);
+                        throw new Exception(strtr(__METHOD__ . ' failed to delete directory : :directory', [':directory' => $file->getRealPath()]));
                     }
                     throw $e;
                 }

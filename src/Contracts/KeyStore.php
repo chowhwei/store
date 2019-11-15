@@ -8,18 +8,18 @@ interface KeyStore
 {
     /**
      * @param string $key
-     * @param string $content
+     * @param $content
      * @return void
      * @throws Exception
      */
-    public function store(string $key, string $content);
+    public function store(string $key, $content);
 
     /**
      * @param string $key
-     * @return string
+     * @return mixed
      * @throws Exception
      */
-    public function get(string $key): string;
+    public function get(string $key);
 
     /**
      * @param string $key
