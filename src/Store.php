@@ -2,47 +2,42 @@
 
 namespace Chowhwei\Store;
 
-use Chowhwei\Store\Contracts\ConfigLoader as ConfigLoaderContract;
-use Chowhwei\Store\Contracts\ContentStore;
+use Chowhwei\Store\Contracts\ContentStore as ContentStoreContract;
+use Chowhwei\Store\Store\FileClient;
 use Chowhwei\Store\Store\KohanaConfigLoader;
-use Illuminate\Container\Container;
-use Illuminate\Support\ServiceProvider;
+use Chowhwei\Store\Store\OssClient;
+use Chowhwei\Store\Store\StoreConfig;
+use Exception;
 
-class Store extends Container
+/**
+ * 在laravel框架之外，使用Store充当容器
+ *
+ * $storeApp = new StoreApp();
+ * $cs = $storeApp->make(ContentStore::class);
+ * $cs = Store::contentStore('toc');
+ *
+ * Class Store
+ * @package Chowhwei\Store
+ */
+class Store
 {
+    static protected $store_apps = [];
+
     /**
-     * @param string $app
-     * @return ContentStore
+     * @param string $store_app
+     * @return ContentStoreContract
+     * @throws Exception
      */
-    static public function contentStore(string $app = 'default')
+    static public function app(string $store_app = 'default')
     {
-        static $instances = [];
-        if (!isset($instances[$app])) {
-            $store = new self($app);
-            $instances[$app] = $store->make(ContentStore::class);
+        $configLoader = new KohanaConfigLoader();
+        $config = new StoreConfig($configLoader, $store_app);
+        $store_app = $config->getStoreApp();
+        if (!isset(self::$store_apps[$store_app])) {
+            $ossClient = new OssClient($config);
+            $fileClient = new FileClient($config);
+            self::$store_apps[$store_app] = new ContentStore($ossClient, $fileClient);
         }
-        return $instances[$app];
-    }
-
-    protected $providers = [
-        StoreServiceProvider::class
-    ];
-
-    public function __construct(string $app)
-    {
-        $this->instance('store_app', $app);
-
-        foreach ($this->providers as $provider) {
-            /** @var ServiceProvider $provider */
-            $provider = new $provider($this);
-            $provider->register();
-        }
-
-        /**
-         * 这里只在laravel外用，使用KohanaConfigLoader覆盖默认
-         */
-        $this->singleton(ConfigLoaderContract::class, function (Store $store) {
-            return new KohanaConfigLoader();
-        });
+        return self::$store_apps[$store_app];
     }
 }

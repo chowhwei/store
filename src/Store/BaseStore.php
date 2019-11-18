@@ -2,14 +2,15 @@
 
 namespace Chowhwei\Store\Store;
 
-use Chowhwei\Store\Contracts\StoreClient;
+use Chowhwei\Store\Contracts\OssClient;
+use Chowhwei\Store\Contracts\FileClient;
 use Exception;
 
 abstract class BaseStore
 {
-    /** @var StoreClient $ossClient */
+    /** @var OssClient $ossClient */
     protected $ossClient;
-    /** @var StoreClient $fileClient */
+    /** @var FileClient $fileClient */
     protected $fileClient;
 
     /**
