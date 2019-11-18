@@ -6,7 +6,7 @@ use Chowhwei\Store\Contracts\OssClient;
 use Chowhwei\Store\Contracts\FileClient;
 use Exception;
 
-abstract class BaseStore
+class BaseStore
 {
     /** @var OssClient $ossClient */
     protected $ossClient;

@@ -8,7 +8,6 @@ use ErrorException;
 use Exception;
 use SplFileInfo;
 use UnexpectedValueException;
-use Chowhwei\Store\Contracts\StoreConfig;
 
 class FileClient implements FileClientContract
 {
@@ -21,13 +20,14 @@ class FileClient implements FileClientContract
 
     /**
      * FileClient constructor.
-     * @param StoreConfig $storeConfig
+     * @param array $config
+     * @param string $app
      * @throws Exception
      */
-    public function __construct(StoreConfig $storeConfig)
+    public function __construct(array $config, string $app)
     {
-        $this->nfs_root = $storeConfig->getNfsRoot();
-        $this->app = $storeConfig->getStoreApp();
+        $this->nfs_root = $config['nfs_root'];
+        $this->app = $app;
         $this->checkDir();
     }
 

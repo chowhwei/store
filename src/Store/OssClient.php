@@ -3,7 +3,6 @@
 namespace Chowhwei\Store\Store;
 
 use Chowhwei\Store\Contracts\OssClient as OssClientContract;
-use Chowhwei\Store\Contracts\StoreConfig;
 use Exception;
 use OSS\Core\OssException;
 use OSS\OssClient as AliyunOssClient;
@@ -19,25 +18,26 @@ class OssClient implements OssClientContract
 
     /**
      * OssClient constructor.
-     * @param StoreConfig $storeConfig
+     * @param array $config
+     * @param string $app
      * @throws OssException
      */
-    public function __construct(StoreConfig $storeConfig)
+    public function __construct(array $config, string $app)
     {
-        $this->aliyunOssClient = new AliyunOssClient($storeConfig->getOssKeyId(), $storeConfig->getOssKeySecret(), $storeConfig->getOssEndPoint(), false);
-        $this->bucket = $storeConfig->getOssBucket();
-        $this->app = $storeConfig->getStoreApp();
+        $this->aliyunOssClient = new AliyunOssClient($config['oss_keyid'], $config['oss_keysecret'], $config['oss_endpoint'], false);
+        $this->bucket = $config['oss_bucket'];
+        $this->app = $app;
     }
 
     public function get(string $id, $default = null)
     {
         $key = $this->getLimittedId($id);
-        try{
+        try {
             $object = $this->aliyunOssClient->getObject($this->bucket, $key);
 
             return unserialize($object);
-        }catch(OSSException $ex){
-            if($ex->getErrorCode() == 'NoSuchKey'){
+        } catch (OSSException $ex) {
+            if ($ex->getErrorCode() == 'NoSuchKey') {
                 return $default;
             }
             throw $ex;
@@ -47,11 +47,11 @@ class OssClient implements OssClientContract
     public function set(string $id, $data): bool
     {
         $key = $this->getLimittedId($id);
-        try{
+        try {
             $this->aliyunOssClient->putObject($this->bucket, $key, serialize($data));
             return true;
-        }catch(OSSException $ex){
-            if($ex->getErrorCode() == 'NoSuchBucket'){
+        } catch (OSSException $ex) {
+            if ($ex->getErrorCode() == 'NoSuchBucket') {
                 throw new Exception('Invalid AliyunOss id, bucket not exists');
             }
             throw $ex;
@@ -61,11 +61,11 @@ class OssClient implements OssClientContract
     public function del(string $id): bool
     {
         $key = $this->getLimittedId($id);
-        try{
+        try {
             $this->aliyunOssClient->deleteObject($this->bucket, $key);
             return true;
-        }catch(OSSException $ex){
-            if($ex->getErrorCode() == 'NoSuchBucket'){
+        } catch (OSSException $ex) {
+            if ($ex->getErrorCode() == 'NoSuchBucket') {
                 throw new Exception('Invalid AliyunOss id, bucket not exists');
             }
             return false;

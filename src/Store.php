@@ -2,42 +2,47 @@
 
 namespace Chowhwei\Store;
 
-use Chowhwei\Store\Contracts\ContentStore as ContentStoreContract;
-use Chowhwei\Store\Store\FileClient;
+use Chowhwei\Store\Contracts\ConfigLoader as ConfigLoaderContract;
 use Chowhwei\Store\Store\KohanaConfigLoader;
-use Chowhwei\Store\Store\OssClient;
-use Chowhwei\Store\Store\StoreConfig;
-use Exception;
+use Illuminate\Container\Container;
+use Illuminate\Support\ServiceProvider;
 
-/**
- * 在laravel框架之外，使用Store充当容器
- *
- * $storeApp = new StoreApp();
- * $cs = $storeApp->make(ContentStore::class);
- * $cs = Store::contentStore('toc');
- *
- * Class Store
- * @package Chowhwei\Store
- */
-class Store
+class Store extends Container
 {
-    static protected $store_apps = [];
+    /** @var Container $app */
+    static $app = null;
+
+    protected $providers = [
+        StoreServiceProvider::class
+    ];
+
+    public function __construct()
+    {
+        foreach ($this->providers as $provider) {
+            /** @var ServiceProvider $provider */
+            $provider = new $provider($this);
+            $provider->register();
+        }
+
+        /**
+         * 这里只在laravel外用，使用KohanaConfigLoader覆盖默认
+         */
+        $this->singleton(ConfigLoaderContract::class, function (Store $store) {
+            return new KohanaConfigLoader();
+        });
+    }
 
     /**
-     * @param string $store_app
-     * @return ContentStoreContract
-     * @throws Exception
+     * @param string $name
+     * @return Contracts\ContentStore
+     * @throws \OSS\Core\OssException
      */
-    static public function app(string $store_app = 'default')
-    {
-        $configLoader = new KohanaConfigLoader();
-        $config = new StoreConfig($configLoader, $store_app);
-        $store_app = $config->getStoreApp();
-        if (!isset(self::$store_apps[$store_app])) {
-            $ossClient = new OssClient($config);
-            $fileClient = new FileClient($config);
-            self::$store_apps[$store_app] = new ContentStore($ossClient, $fileClient);
+    static public function app(string $name){
+        if(is_null(self::$app)){
+            self::$app = new static();
         }
-        return self::$store_apps[$store_app];
+        /** @var Factory $factory */
+        $factory = self::$app->make(\Chowhwei\Store\Contracts\Factory::class);
+        return $factory->app($name);
     }
 }
