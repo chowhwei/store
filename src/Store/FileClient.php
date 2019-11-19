@@ -2,14 +2,14 @@
 
 namespace Chowhwei\Store\Store;
 
-use Chowhwei\Store\Contracts\FileClient as FileClientContract;
+use Chowhwei\Store\Contracts\StoreClient;
 use DirectoryIterator;
 use ErrorException;
 use Exception;
 use SplFileInfo;
 use UnexpectedValueException;
 
-class FileClient implements FileClientContract
+class FileClient implements StoreClient
 {
     /** @var string $nfs_root */
     protected $nfs_root;

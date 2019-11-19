@@ -2,12 +2,12 @@
 
 namespace Chowhwei\Store\Store;
 
-use Chowhwei\Store\Contracts\OssClient as OssClientContract;
+use Chowhwei\Store\Contracts\StoreClient;
 use Exception;
 use OSS\Core\OssException;
 use OSS\OssClient as AliyunOssClient;
 
-class OssClient implements OssClientContract
+class OssClient implements StoreClient
 {
     /** @var AliyunOssClient $aliyunOssClient */
     protected $aliyunOssClient;

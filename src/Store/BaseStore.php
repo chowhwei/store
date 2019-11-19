@@ -2,24 +2,23 @@
 
 namespace Chowhwei\Store\Store;
 
-use Chowhwei\Store\Contracts\OssClient;
-use Chowhwei\Store\Contracts\FileClient;
+use Chowhwei\Store\Contracts\StoreClient;
 use Exception;
 
 class BaseStore
 {
-    /** @var OssClient $ossClient */
+    /** @var StoreClient $ossClient */
     protected $ossClient;
-    /** @var FileClient $fileClient */
+    /** @var StoreClient $fileClient */
     protected $fileClient;
 
     /**
      * KeyStore constructor.
-     * @param OssClient $ossClient
-     * @param FileClient $fileClient
+     * @param StoreClient $ossClient
+     * @param StoreClient $fileClient
      * @throws Exception
      */
-    public function __construct(OssClient $ossClient, FileClient $fileClient)
+    public function __construct(StoreClient $ossClient, StoreClient $fileClient)
     {
         $this->ossClient = $ossClient;
         $this->fileClient = $fileClient;
