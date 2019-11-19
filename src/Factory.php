@@ -53,8 +53,8 @@ class Factory implements FactoryContract
         if(!isset($this->apps[$app])){
             $config = $all_config->get("store.{$app}");
 
-            $ossClient = $this->getOssClient($all_config->get("oss.{$config['oss']}"), $config['oss'], $app);
-            $fileClient = $this->getFileClient($all_config->get("file.{$config['file']}"), $config['file'], $app);
+            $ossClient = $this->getOssClient($all_config->get("client.{$config['oss']}"), $config['oss'], $app);
+            $fileClient = $this->getFileClient($all_config->get("client.{$config['file']}"), $config['file'], $app);
 
             $this->apps[$app] = new ContentStore($ossClient, $fileClient);
         }
@@ -72,7 +72,7 @@ class Factory implements FactoryContract
     protected function getOssClient($config, $oss, $app)
     {
         if(!isset($this->ossClients[$oss])){
-            $this->ossClients[$oss] = $this->clientFactory->makeClient('oss', $config, $app);
+            $this->ossClients[$oss] = $this->clientFactory->makeClient($config, $app);
         }
 
         return $this->ossClients[$oss];
@@ -88,7 +88,7 @@ class Factory implements FactoryContract
     protected function getFileClient($config, $file, $app)
     {
         if(!isset($this->fileClients[$file])){
-            $this->fileClients[$file] = $this->clientFactory->makeClient('file', $config, $app);
+            $this->fileClients[$file] = $this->clientFactory->makeClient($config, $app);
         }
         return $this->fileClients[$file];
     }

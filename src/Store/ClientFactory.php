@@ -7,16 +7,15 @@ use Chowhwei\Store\Contracts\StoreClient;
 class ClientFactory implements \Chowhwei\Store\Contracts\ClientFactory
 {
     /**
-     * @param string $type
      * @param array $config
      * @param string $app
      * @return StoreClient|FileClient|OssClient
      * @throws \OSS\Core\OssException
      * @throws \Exception
      */
-    public function makeClient($type, $config, $app)
+    public function makeClient($config, $app)
     {
-        switch ($type) {
+        switch (trim(strtolower($config['type']))) {
             case 'oss':
                 return new OssClient($config, $app);
                 break;
@@ -25,7 +24,7 @@ class ClientFactory implements \Chowhwei\Store\Contracts\ClientFactory
                 break;
             default:
                 throw new \Exception(strtr('Invalid type :type', [
-                    ':type' => $type
+                    ':type' => $config['type']
                 ]));
                 break;
         }
