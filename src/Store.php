@@ -27,7 +27,7 @@ class Store extends Container
         /**
          * 这里只在laravel外用，使用KohanaConfigLoader覆盖默认
          */
-        $this->singleton(ConfigLoaderContract::class, function (Store $store) {
+        $this->singleton(ConfigLoaderContract::class, function (Container $app) {
             return new KohanaConfigLoader();
         });
     }
@@ -36,6 +36,7 @@ class Store extends Container
      * @param string $name
      * @return Contracts\ContentStore
      * @throws \OSS\Core\OssException
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     static public function app(string $name){
         if(is_null(self::$app)){
