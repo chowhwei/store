@@ -5,9 +5,15 @@ namespace Chowhwei\Store;
 use Chowhwei\Store\Contracts\ConfigLoader as ConfigLoaderContract;
 use Chowhwei\Store\Store\KohanaConfigLoader;
 use Config;
+use Config_File;
 use Illuminate\Container\Container;
 use Illuminate\Support\ServiceProvider;
 
+/**
+ * 在kohana下使用的
+ * Class Store
+ * @package Chowhwei\Store
+ */
 class Store extends Container
 {
     /** @var Container $app */
@@ -29,7 +35,7 @@ class Store extends Container
          * 这里只在laravel外用，使用KohanaConfigLoader覆盖默认
          */
         $this->singleton(ConfigLoaderContract::class, function (Container $app) {
-            return new KohanaConfigLoader($app->make(Config::class));
+            return new KohanaConfigLoader($app->make(Config::class), $app->make(Config_File::class));
         });
     }
 
