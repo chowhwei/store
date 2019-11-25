@@ -2,30 +2,16 @@
 
 namespace Chowhwei\Store;
 
-use Chowhwei\Store\Contracts\ClientFactory;
-use Chowhwei\Store\Contracts\ConfigLoader as ConfigLoaderContract;
-use Chowhwei\Store\Store\ConfigLoader;
+use Chowhwei\Store\Contracts\StoreFactory as StoreFactoryContract;
 use Illuminate\Container\Container;
-use Illuminate\Contracts\Config\Repository;
 use Illuminate\Support\ServiceProvider;
 
 class StoreServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        /**
-         * 默认绑定laravel的ConfigLoader
-         */
-        $this->app->singleton(ConfigLoaderContract::class, function (Container $app) {
-            return new ConfigLoader($app->make(Repository::class));
-        });
-
-        $this->app->singleton(ClientFactory::class, function(Container $app){
-            return new \Chowhwei\Store\Store\ClientFactory();
-        });
-
-        $this->app->singleton(\Chowhwei\Store\Contracts\Factory::class, function(Container $app){
-            return new Factory($app->make(ConfigLoaderContract::class), $app->make(ClientFactory::class));
+        $this->app->singleton(StoreFactoryContract::class, function (Container $app) {
+            return new StoreFactory();
         });
     }
 }

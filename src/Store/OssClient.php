@@ -13,20 +13,20 @@ class OssClient implements StoreClient
     protected $aliyunOssClient;
     /** @var string $bucket */
     protected $bucket;
-    /** @var string $app */
-    protected $app;
+    /** @var string $dir */
+    protected $dir;
 
     /**
      * OssClient constructor.
      * @param array $config
-     * @param string $app
+     * @param string $dir
      * @throws OssException
      */
-    public function __construct(array $config, string $app)
+    public function __construct(array $config, string $dir)
     {
         $this->aliyunOssClient = new AliyunOssClient($config['oss_keyid'], $config['oss_keysecret'], $config['oss_endpoint'], false);
         $this->bucket = $config['oss_bucket'];
-        $this->app = $app;
+        $this->dir = $dir;
     }
 
     public function get(string $id, $default = null)
@@ -74,6 +74,6 @@ class OssClient implements StoreClient
 
     protected function getLimittedId(string $id)
     {
-        return $this->app . '/' . $id;
+        return $this->dir . '/' . $id;
     }
 }

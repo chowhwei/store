@@ -13,21 +13,21 @@ class FileClient implements StoreClient
 {
     /** @var string $nfs_root */
     protected $nfs_root;
-    /** @var string $app */
-    protected $app;
-    /** @var SplFileInfo $dir */
+    /** @var string $dir */
     protected $dir;
+    /** @var SplFileInfo $spi */
+    protected $spi;
 
     /**
      * FileClient constructor.
      * @param array $config
-     * @param string $app
+     * @param string $dir
      * @throws Exception
      */
-    public function __construct(array $config, string $app)
+    public function __construct(array $config, string $dir)
     {
         $this->nfs_root = $config['nfs_root'];
-        $this->app = $app;
+        $this->dir = $dir;
         $this->checkDir();
     }
 
@@ -36,24 +36,24 @@ class FileClient implements StoreClient
      */
     protected function checkDir()
     {
-        $root = $this->nfs_root . DIRECTORY_SEPARATOR . $this->app;
+        $root = $this->nfs_root . DIRECTORY_SEPARATOR . $this->dir;
 
         try {
-            $this->dir = new SplFileInfo($root);
+            $this->spi = new SplFileInfo($root);
         } catch (UnexpectedValueException $e) {
-            $this->dir = $this->makeDirectory($root, 0777, TRUE);
+            $this->spi = $this->makeDirectory($root, 0777, TRUE);
         }
 
-        if ($this->dir->isFile()) {
-            throw new Exception(strtr('Unable to create directory as a file already exists : :resource', array(':resource' => $this->dir->getRealPath())));
+        if ($this->spi->isFile()) {
+            throw new Exception(strtr('Unable to create directory as a file already exists : :resource', array(':resource' => $this->spi->getRealPath())));
         }
 
-        if (!$this->dir->isReadable()) {
-            throw new Exception(strtr('Unable to read from the directory :resource', array(':resource' => $this->dir->getRealPath())));
+        if (!$this->spi->isReadable()) {
+            throw new Exception(strtr('Unable to read from the directory :resource', array(':resource' => $this->spi->getRealPath())));
         }
 
-        if (!$this->dir->isWritable()) {
-            throw new Exception(strtr('Unable to write to the directory :resource', array(':resource' => $this->dir->getRealPath())));
+        if (!$this->spi->isWritable()) {
+            throw new Exception(strtr('Unable to write to the directory :resource', array(':resource' => $this->spi->getRealPath())));
         }
     }
 
@@ -133,7 +133,7 @@ class FileClient implements StoreClient
     protected function resolveDirectory($filename)
     {
 
-        return $this->dir->getRealPath() . DIRECTORY_SEPARATOR
+        return $this->spi->getRealPath() . DIRECTORY_SEPARATOR
             . $filename[0] . DIRECTORY_SEPARATOR
             . $filename[1] . $filename[2] . DIRECTORY_SEPARATOR
             . $filename[3] . $filename[4] . $filename[5] . DIRECTORY_SEPARATOR

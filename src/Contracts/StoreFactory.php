@@ -2,7 +2,7 @@
 
 namespace Chowhwei\Store\Contracts;
 
-interface Factory
+interface StoreFactory
 {
     /**
      * @param string $app
