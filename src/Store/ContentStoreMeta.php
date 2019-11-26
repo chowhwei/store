@@ -11,12 +11,24 @@ class ContentStoreMeta extends Model implements ContentStoreMetaContract
         'key', 'size', 'reference_count'
     ];
 
+    /** @var callable $connectionSetter */
+    protected $connectionSetter;
+
+    public function setConnectionSetter($connectionSetter)
+    {
+        $this->connectionSetter = $connectionSetter;
+    }
+
     public function saveMeta(string $key, int $size)
     {
+        $model = $this->newQuery();
+        if(is_callable($this->connectionSetter)){
+            $model = call_user_func($this->connectionSetter, $model);
+        }
         /**
          * 用key去检索，如果没有，用key和size/reference_count去构建
          */
-        $model = $this->newQuery()->firstOrCreate([
+        $model = $model->firstOrCreate([
             'key' => $key
         ], [
             'size' => $size,

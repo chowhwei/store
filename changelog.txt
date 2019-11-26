@@ -1,4 +1,5 @@
 * 2019-11-26
+1.0.13 fix 保存meta的一个bug
 1.0.12 fix 保存meta的一个bug
 1.0.11 fix 保存meta的一个bug
 1.0.10 忽略读文件错误，meta可以为null

@@ -9,6 +9,7 @@ use Chowhwei\Store\Store\ContentStoreMeta;
 use Chowhwei\Store\Store\FileClient;
 use Chowhwei\Store\Store\OssClient;
 use Illuminate\Config\Repository;
+use Illuminate\Database\Eloquent\Model;
 
 class StoreFactory implements StoreFactoryContract
 {
@@ -59,7 +60,11 @@ class StoreFactory implements StoreFactoryContract
             $fileClient = $this->getClient($config['file'], $app);
             $meta = $this->getMeta($config['meta']);
 
-            $this->apps[$app] = new ContentStore($ossClient, $fileClient, $meta);
+            $cs = new ContentStore($ossClient, $fileClient);
+            if (!is_null($meta)) {
+                $cs->setMeta($meta);
+            }
+            $this->apps[$app] = $cs;
         }
 
         return $this->apps[$app];
@@ -89,8 +94,9 @@ class StoreFactory implements StoreFactoryContract
     protected function makeMeta($config)
     {
         $meta = new ContentStoreMeta();
-        $meta->setConnection($config['connection']);
-        $meta->setTable($config['table']);
+        $meta->setConnectionSetter(function (Model $model) use ($config) {
+            return $model->setTable($config['table'])->setConnection($config['connection']);
+        });
         return $meta;
     }
 
