@@ -7,33 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class ContentStoreMeta extends Model implements ContentStoreMetaContract
 {
-    protected $fillable = [
-        'key', 'size', 'reference_count'
-    ];
-
-    /** @var callable $connectionSetter */
-    protected $connectionSetter;
-
-    public function setConnectionSetter($connectionSetter)
-    {
-        $this->connectionSetter = $connectionSetter;
-    }
-
     public function saveMeta(string $key, int $size)
     {
-        $model = $this->newQuery();
-        if(is_callable($this->connectionSetter)){
-            $model = call_user_func($this->connectionSetter, $model);
+        $model = $this->newQuery()
+            ->where('key', '=', $key)
+            ->first();
+        if(is_null($model))
+        {
+            $model = clone($this);
+            $model->key = $key;
         }
-        /**
-         * 用key去检索，如果没有，用key和size/reference_count去构建
-         */
-        $model = $model->firstOrCreate([
-            'key' => $key
-        ], [
-            'size' => $size,
-            'reference_count' => 1
-        ]);
+        $model->size = $size;
         $model->save();
     }
 

@@ -94,9 +94,8 @@ class StoreFactory implements StoreFactoryContract
     protected function makeMeta($config)
     {
         $meta = new ContentStoreMeta();
-        $meta->setConnectionSetter(function (Model $model) use ($config) {
-            return $model->setTable($config['table'])->setConnection($config['connection']);
-        });
+        $meta->setConnection($config['connection'])
+            ->setTable($config['table']);
         return $meta;
     }
 
