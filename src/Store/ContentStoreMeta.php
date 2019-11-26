@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class ContentStoreMeta extends Model implements ContentStoreMetaContract
 {
+    protected $fillable = [
+        'key', 'size', 'reference_count'
+    ];
+
     public function saveMeta(string $key, int $size)
     {
         /**
