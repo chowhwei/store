@@ -9,17 +9,15 @@ class ContentStoreMeta extends Model implements ContentStoreMetaContract
 {
     public function saveMeta(string $key, int $size)
     {
-        $res = $this->newQuery()
-            ->where('key', '=', $key)
-            ->limit(1)
-            ->get();
-        if ($res->count() == 0) {
-            $model = $this;
-            $model->key = $key;
-        } else {
-            $model = $res[0];
-        }
-        $model->size = $size;
+        /**
+         * 用key去检索，如果没有，用key和size/reference_count去构建
+         */
+        $model = $this->newQuery()->firstOrCreate([
+            'key' => $key
+        ], [
+            'size' => $size,
+            'reference_count' => 1
+        ]);
         $model->save();
     }
 
