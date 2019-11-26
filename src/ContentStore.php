@@ -20,10 +20,10 @@ class ContentStore implements ContentStoreContract
      * KeyStore constructor.
      * @param StoreClient $ossClient
      * @param StoreClient $fileClient
-     * @param MetaContract $meta
+     * @param MetaContract|null $meta
      * @throws Exception
      */
-    public function __construct(StoreClient $ossClient, StoreClient $fileClient, MetaContract $meta)
+    public function __construct(StoreClient $ossClient, StoreClient $fileClient, $meta)
     {
         $this->ossClient = $ossClient;
         $this->fileClient = $fileClient;
