@@ -41,7 +41,12 @@ class ContentStore implements ContentStoreContract
 
     public function get(string $key)
     {
-        $val = $this->fileClient->get($key);
+        try {
+            $val = $this->fileClient->get($key);
+        }catch (Exception $ex)
+        {
+            $val = null;
+        }
         if (is_null($val)) {
             $val = $this->ossClient->get($key);
         }
