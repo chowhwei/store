@@ -34,4 +34,11 @@ interface ContentStore
      * @throws Exception
      */
     public function storeContent(string $content): string;
+
+    /**
+     * @param string $content
+     * @param string $old_key
+     * @return string
+     */
+    public function replaceContent(string $content, string $old_key): string;
 }

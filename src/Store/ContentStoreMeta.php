@@ -23,14 +23,14 @@ class ContentStoreMeta extends Model implements ContentStoreMetaContract
 
     public function incrReference(string $key)
     {
-        $this->newQuery()
+        return $this->newQuery()
             ->where('key', '=', $key)
             ->increment('reference_count');
     }
 
     public function decrReference(string $key)
     {
-        $this->newQuery()
+        return $this->newQuery()
             ->where('key', '=', $key)
             ->where('reference_count', '>', 0)
             ->decrement('reference_count');

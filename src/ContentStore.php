@@ -37,7 +37,7 @@ class ContentStore implements ContentStoreContract
     {
         $this->ossClient->set($key, $content);
         $this->fileClient->set($key, $content);
-        if(!is_null($this->meta)) {
+        if (!is_null($this->meta)) {
             $this->meta->saveMeta($key, strlen($content));
         }
     }
@@ -46,8 +46,7 @@ class ContentStore implements ContentStoreContract
     {
         try {
             $val = $this->fileClient->get($key);
-        }catch (Exception $ex)
-        {
+        } catch (Exception $ex) {
             $val = null;
         }
         if (is_null($val)) {
@@ -58,12 +57,13 @@ class ContentStore implements ContentStoreContract
 
     public function del(string $key)
     {
-        $this->ossClient->del($key);
-        $this->fileClient->del($key);
-        if(!is_null($this->meta)) {
+        if (!is_null($this->meta)) {
             $this->meta->decrReference($key);
         }
+        $this->ossClient->del($key);
+        $this->fileClient->del($key);
     }
+
     /**
      * @param string $content
      * @return string
@@ -72,10 +72,36 @@ class ContentStore implements ContentStoreContract
     public function storeContent(string $content): string
     {
         $hash = hash('sha256', $content);
-        if(is_null($this->ossClient->get($hash))){
+        if (is_null($this->ossClient->get($hash))) {
             $this->store($hash, $content);
         } else {
-            if(!is_null($this->meta)) {
+            if (!is_null($this->meta)) {
+                $this->meta->incrReference($hash);
+            }
+        }
+        return $hash;
+    }
+
+    /**
+     * @param string $content
+     * @param string $old_key
+     * @return string
+     * @throws Exception
+     */
+    public function replaceContent(string $content, string $old_key): string
+    {
+        $hash = hash('sha256', $content);
+        if($hash == $old_key){
+            return $hash;
+        }
+
+        if (!is_null($this->meta)) {
+            $this->meta->decrReference($old_key);
+        }
+        if (is_null($this->ossClient->get($hash))) {
+            $this->store($hash, $content);
+        } else {
+            if (!is_null($this->meta)) {
                 $this->meta->incrReference($hash);
             }
         }
