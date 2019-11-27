@@ -58,7 +58,7 @@ class StoreFactory implements StoreFactoryContract
             $config = $this->config->get("store.{$app}");
 
             $ossClient = $this->getClient($config['oss'], $app);
-            $nasClient = $this->getClient($config['file'], $app);
+            $nasClient = $this->getClient($config['nas'], $app);
             $meta = $this->getMeta($config['meta']);
 
             $cs = new ContentStore($ossClient, $nasClient);
