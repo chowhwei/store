@@ -24,12 +24,16 @@ return [
             'type' => 'file',
             'nfs_root' => '/data1',
             'dir' => 'toc'
+        ],
+        'nas' => [
+            'type' => 'nas',
+            'root' => '/data1',
+            'dir' => 'toc'
         ]
     ],
 
     'meta' => [
         'toc' => [
-            'type' => 'keystore',
             'connection' => 'base_store',
             'table' => 'chapter_content'
         ]

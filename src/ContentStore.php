@@ -11,21 +11,21 @@ class ContentStore implements ContentStoreContract
 {
     /** @var StoreClient $ossClient */
     protected $ossClient;
-    /** @var StoreClient $fileClient */
-    protected $fileClient;
+    /** @var StoreClient $nasClient */
+    protected $nasClient;
     /** @var MetaContract $meta */
     protected $meta = null;
 
     /**
      * KeyStore constructor.
      * @param StoreClient $ossClient
-     * @param StoreClient $fileClient
+     * @param StoreClient $nasClient
      * @throws Exception
      */
-    public function __construct(StoreClient $ossClient, StoreClient $fileClient)
+    public function __construct(StoreClient $ossClient, StoreClient $nasClient)
     {
         $this->ossClient = $ossClient;
-        $this->fileClient = $fileClient;
+        $this->nasClient = $nasClient;
     }
 
     public function setMeta($meta)
@@ -36,7 +36,7 @@ class ContentStore implements ContentStoreContract
     public function store(string $key, $content)
     {
         $this->ossClient->set($key, $content);
-        $this->fileClient->set($key, $content);
+        $this->nasClient->set($key, $content);
         if (!is_null($this->meta)) {
             $this->meta->saveMeta($key, strlen($content));
         }
@@ -45,7 +45,7 @@ class ContentStore implements ContentStoreContract
     public function get(string $key)
     {
         try {
-            $val = $this->fileClient->get($key);
+            $val = $this->nasClient->get($key);
         } catch (Exception $ex) {
             $val = null;
         }
@@ -61,7 +61,7 @@ class ContentStore implements ContentStoreContract
             $this->meta->decrReference($key);
         }
         $this->ossClient->del($key);
-        $this->fileClient->del($key);
+        $this->nasClient->del($key);
     }
 
     /**

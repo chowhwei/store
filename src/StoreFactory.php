@@ -7,6 +7,7 @@ use Chowhwei\Store\Contracts\StoreClient;
 use Chowhwei\Store\Contracts\StoreFactory as StoreFactoryContract;
 use Chowhwei\Store\Store\ContentStoreMeta;
 use Chowhwei\Store\Store\FileClient;
+use Chowhwei\Store\Store\NasClient;
 use Chowhwei\Store\Store\OssClient;
 use Illuminate\Config\Repository;
 use Illuminate\Database\Eloquent\Model;
@@ -57,10 +58,10 @@ class StoreFactory implements StoreFactoryContract
             $config = $this->config->get("store.{$app}");
 
             $ossClient = $this->getClient($config['oss'], $app);
-            $fileClient = $this->getClient($config['file'], $app);
+            $nasClient = $this->getClient($config['file'], $app);
             $meta = $this->getMeta($config['meta']);
 
-            $cs = new ContentStore($ossClient, $fileClient);
+            $cs = new ContentStore($ossClient, $nasClient);
             if (!is_null($meta)) {
                 $cs->setMeta($meta);
             }
@@ -129,6 +130,9 @@ class StoreFactory implements StoreFactoryContract
                 break;
             case 'file':
                 return new FileClient($config, $dir);
+                break;
+            case 'nas':
+                return new NasClient($config, $dir);
                 break;
             default:
                 throw new \Exception(strtr('Invalid type :type', [

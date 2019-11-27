@@ -9,15 +9,10 @@ use Exception;
 use SplFileInfo;
 use UnexpectedValueException;
 
-/**
- * Class FileClient
- * @package Chowhwei\Store\Store
- * @deprecated use NasClient
- */
-class FileClient implements StoreClient
+class NasClient implements StoreClient
 {
-    /** @var string $nfs_root */
-    protected $nfs_root;
+    /** @var string $root */
+    protected $root;
     /** @var string $dir */
     protected $dir;
     /** @var SplFileInfo $spi */
@@ -31,7 +26,7 @@ class FileClient implements StoreClient
      */
     public function __construct(array $config, string $dir)
     {
-        $this->nfs_root = $config['nfs_root'];
+        $this->root = $config['root'];
         $this->dir = $dir;
         $this->checkDir();
     }
@@ -41,7 +36,7 @@ class FileClient implements StoreClient
      */
     protected function checkDir()
     {
-        $root = $this->nfs_root . DIRECTORY_SEPARATOR . $this->dir;
+        $root = $this->root . DIRECTORY_SEPARATOR . $this->dir;
 
         try {
             $this->spi = new SplFileInfo($root);
@@ -88,7 +83,7 @@ class FileClient implements StoreClient
      */
     public function get(string $id, $default = null)
     {
-        $filename = $this->getFilename($this->getSanitizedId($id));
+        $filename = $this->getFilename($id);
         $directory = $this->resolveDirectory($filename);
 
         try {
@@ -126,23 +121,14 @@ class FileClient implements StoreClient
 
     protected function getFilename($string)
     {
-        return sha1($string);
-    }
-
-    protected function getSanitizedId($id)
-    {
-        // Change slashes and spaces to underscores
-        return str_replace(array('/', '\\', ' '), '_', $id);
+        return hash('sha256', $string);
     }
 
     protected function resolveDirectory($filename)
     {
-
         return $this->spi->getRealPath() . DIRECTORY_SEPARATOR
-            . $filename[0] . DIRECTORY_SEPARATOR
-            . $filename[1] . $filename[2] . DIRECTORY_SEPARATOR
-            . $filename[3] . $filename[4] . $filename[5] . DIRECTORY_SEPARATOR
-            . $filename[6] . $filename[7] . $filename[8] . $filename[9] . DIRECTORY_SEPARATOR;
+            . $filename[0] . $filename[1] . DIRECTORY_SEPARATOR
+            . $filename[2] . $filename[3] . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -154,7 +140,7 @@ class FileClient implements StoreClient
      */
     public function set(string $id, $data): bool
     {
-        $filename = $this->getFilename($this->getSanitizedId($id));
+        $filename = $this->getFilename($id);
         $directory = $this->resolveDirectory($filename);
 
         $dir = new SplFileInfo($directory);
@@ -206,7 +192,7 @@ class FileClient implements StoreClient
      */
     public function del(string $id): bool
     {
-        $filename = $this->getFilename($this->getSanitizedId($id));
+        $filename = $this->getFilename($id);
         $directory = $this->resolveDirectory($filename);
 
         return $this->deleteFile(new SplFileInfo($directory . $filename), NULL, TRUE);
