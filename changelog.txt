@@ -1,4 +1,6 @@
 * 2019-11-28
+1.0.21
+    fix hash bug
 1.0.20
     fix 创建多个contentstore时，ossclient/nasclient中dir会保留第一个
 

@@ -112,7 +112,7 @@ class StoreFactory implements StoreFactoryContract
      */
     protected function getClient($name, $dir)
     {
-        $index = hash('hash256', $name . $dir);
+        $index = hash('sha256', $name . $dir);
         if (!isset($this->clients[$index])) {
             $this->clients[$index] = $this->makeClient($this->config->get("client.{$name}"), $dir);
         }
