@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'default' => 'toc',
+    'default' => 'default',
 
     'store' => [
-        'toc' => [
+        'default' => [
             'oss' => 'kj-file',
-            'file' => 'data1',
+            'nas' => 'data1',
             'meta' => 'toc'
         ]
     ],
@@ -19,11 +19,6 @@ return [
             'oss_keysecret' => '',
             'oss_bucket' => '',
             'prefix' => 'toc'
-        ],
-        'data1' => [
-            'type' => 'file',
-            'nfs_root' => '/data1',
-            'dir' => 'toc'
         ],
         'nas' => [
             'type' => 'nas',

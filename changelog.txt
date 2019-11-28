@@ -1,3 +1,9 @@
+* 2019-11-28
+1.0.18
+    不再支持file
+    配置中meta可以不写
+    配置中没有app时报错
+
 * 2019-11-27
 1.0.17 change config name from file to nas
 1.0.16 add NasClient 目录结构调整成 256*256，避免消耗过多inode

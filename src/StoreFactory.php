@@ -54,12 +54,19 @@ class StoreFactory implements StoreFactoryContract
             $app = $this->config->get('default');
         }
 
+        $store_config = $this->config->get('store');
+        if(!isset($store_config[$app])){
+            throw new \Exception(strtr('Invalid store app :app', [
+                ':app' => $app
+            ]));
+        }
+
         if (!isset($this->apps[$app])) {
             $config = $this->config->get("store.{$app}");
 
             $ossClient = $this->getClient($config['oss'], $app);
             $nasClient = $this->getClient($config['nas'], $app);
-            $meta = $this->getMeta($config['meta']);
+            $meta = isset($config['meta']) && $config['meta'] !== false ? $this->getMeta($config['meta']) : null;
 
             $cs = new ContentStore($ossClient, $nasClient);
             if (!is_null($meta)) {
@@ -78,9 +85,6 @@ class StoreFactory implements StoreFactoryContract
      */
     protected function getMeta($name)
     {
-        if ($name === false) {
-            return null;
-        }
         if (!isset($this->metas[$name])) {
             $this->metas[$name] = $this->makeMeta($this->config->get("meta.{$name}"));
         }
@@ -127,9 +131,6 @@ class StoreFactory implements StoreFactoryContract
         switch (trim(strtolower($config['type']))) {
             case 'oss':
                 return new OssClient($config, $dir);
-                break;
-            case 'file':
-                return new FileClient($config, $dir);
                 break;
             case 'nas':
                 return new NasClient($config, $dir);
