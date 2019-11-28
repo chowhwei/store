@@ -1,4 +1,7 @@
 * 2019-11-28
+1.0.20
+    fix 创建多个contentstore时，ossclient/nasclient中dir会保留第一个
+
 1.0.19
     ContentStore增加has方法，判断内容是否在两个里面存在
     StoreClient增加has方法，判断对象是否存在不用返回整个对象
