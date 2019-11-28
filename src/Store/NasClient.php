@@ -272,4 +272,23 @@ class NasClient implements StoreClient
             throw $e;
         }
     }
+
+    /**
+     * @param string $id
+     * @return bool
+     * @throws Exception
+     */
+    public function has(string $id): bool
+    {
+        $filename = $this->getFilename($id);
+        $directory = $this->resolveDirectory($filename);
+
+        try {
+            $file = new SplFileInfo($directory . $filename);
+            return $file->isFile();
+        } catch (Exception $e) {
+            // Otherwise throw the exception
+            throw $e;
+        }
+    }
 }

@@ -65,6 +65,25 @@ class ContentStore implements ContentStoreContract
     }
 
     /**
+     * @param string $key
+     * @return int
+     */
+    public function has(string $key)
+    {
+        $has = 0;
+        if($this->ossClient->has($key))
+        {
+            $has |= 1;
+        }
+
+        if($this->nasClient->has($key))
+        {
+            $has |= 1 << 1;
+        }
+        return $has;
+    }
+
+    /**
      * @param string $content
      * @return string
      * @throws Exception
@@ -72,7 +91,7 @@ class ContentStore implements ContentStoreContract
     public function storeContent(string $content): string
     {
         $hash = hash('sha256', $content);
-        if (is_null($this->ossClient->get($hash))) {
+        if (!$this->ossClient->has($hash)) {
             $this->store($hash, $content);
         } else {
             if (!is_null($this->meta)) {
@@ -98,7 +117,7 @@ class ContentStore implements ContentStoreContract
         if (!is_null($this->meta)) {
             $this->meta->decrReference($old_key);
         }
-        if (is_null($this->ossClient->get($hash))) {
+        if (!$this->ossClient->has($hash)) {
             $this->store($hash, $content);
         } else {
             if (!is_null($this->meta)) {

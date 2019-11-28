@@ -72,6 +72,19 @@ class OssClient implements StoreClient
         }
     }
 
+    public function has(string $id): bool
+    {
+        $key = $this->getLimittedId($id);
+        try {
+            return $this->aliyunOssClient->doesObjectExist($this->bucket, $key);
+        } catch (OSSException $ex) {
+            if ($ex->getErrorCode() == 'NoSuchKey') {
+                return false;
+            }
+            throw $ex;
+        }
+    }
+
     protected function getLimittedId(string $id)
     {
         return $this->dir . '/' . $id;

@@ -28,4 +28,10 @@ interface StoreClient
      * @throws Exception
      */
     public function del(string $id): bool;
+
+    /**
+     * @param string $id
+     * @return bool
+     */
+    public function has(string $id): bool;
 }

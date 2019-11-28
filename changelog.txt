@@ -1,4 +1,9 @@
 * 2019-11-28
+1.0.19
+    ContentStore增加has方法，判断内容是否在两个里面存在
+    StoreClient增加has方法，判断对象是否存在不用返回整个对象
+    add migration
+
 1.0.18
     不再支持file
     配置中meta可以不写

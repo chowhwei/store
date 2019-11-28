@@ -29,6 +29,12 @@ interface ContentStore
     public function del(string $key);
 
     /**
+     * @param string $key
+     * @return int
+     */
+    public function has(string $key);
+
+    /**
      * @param string $content
      * @return string
      * @throws Exception
