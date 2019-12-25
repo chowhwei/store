@@ -110,14 +110,17 @@ class ContentStore implements ContentStoreContract
     public function replaceContent(string $content, string $old_key): string
     {
         $hash = hash('sha256', $content);
-        if($hash == $old_key){
-            return $hash;
+        $ossHas = $this->ossClient->has($hash);
+        if($ossHas) {
+            if ($hash == $old_key) {
+                return $hash;
+            }
         }
 
         if (!is_null($this->meta)) {
             $this->meta->decrReference($old_key);
         }
-        if (!$this->ossClient->has($hash)) {
+        if (!$ossHas) {
             $this->store($hash, $content);
         } else {
             if (!is_null($this->meta)) {
