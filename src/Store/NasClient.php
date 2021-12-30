@@ -105,7 +105,15 @@ class NasClient implements StoreClient
                     $content .= $data->fgets();
                 }
 
-                return unserialize($content);
+                $val = unserialize($content);
+
+                if($val === FALSE)
+                {
+                    $this->del($id);
+                    return $default;
+                }
+
+                return $val;
             }
 
         } catch (Exception $e) {
