@@ -51,6 +51,13 @@ class ContentStore implements ContentStoreContract
         }
         if (is_null($val)) {
             $val = $this->ossClient->get($key);
+            if (!is_null($val)) {
+                try {
+                    $this->nasClient->set($key, $val);
+                }catch (Exception $ex){
+
+                }
+            }
         }
         return $val;
     }
@@ -71,13 +78,11 @@ class ContentStore implements ContentStoreContract
     public function has(string $key)
     {
         $has = 0;
-        if($this->ossClient->has($key))
-        {
+        if ($this->ossClient->has($key)) {
             $has |= 1;
         }
 
-        if($this->nasClient->has($key))
-        {
+        if ($this->nasClient->has($key)) {
             $has |= 1 << 1;
         }
         return $has;
